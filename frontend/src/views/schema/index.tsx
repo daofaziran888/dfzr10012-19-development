@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { request } from '@/api/client'
+import CompatPanel from './CompatPanel'
 
 const ENDPOINT = '/api/schema'
 const columns = [
@@ -157,6 +158,8 @@ export default function SchemaView() {
         <span>共 {total} 条流数据格式定义记录</span>
         {errorMessage && <span className="error-text">{errorMessage}</span>}
       </footer>
+
+      <CompatPanel />
     </section>
   )
 }

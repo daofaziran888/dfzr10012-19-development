@@ -28,6 +28,30 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class CandidateField(BaseModel):
+    """候选格式文件里的单个字段：只取字段名称和字段类型两个要素。"""
+
+    字段名称: str
+    字段类型: str
+
+
+class CompatImportPayload(BaseModel):
+    """候选格式文件导入入参：格式定义按字段名称、字段类型、格式版本形成兼容结论。"""
+
+    定义编号: str
+    候选版本: str
+    字段列表: list[CandidateField]
+    文件名: str | None = None
+
+
+class CompatConsumePayload(BaseModel):
+    """输出配置侧消费兼容报告的入参，report_id 与 report_no 至少给一个。"""
+
+    report_id: int | None = None
+    report_no: str | None = None
+    消费方: str | None = None
+
+
 
 class StreaminEntry(BaseModel):
     """流数据源明细结构。"""

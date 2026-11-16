@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { request } from '@/api/client'
+import SinkCompatPanel from './SinkCompatPanel'
 
 const ENDPOINT = '/api/sink'
 const columns = [
@@ -157,6 +158,8 @@ export default function SinkView() {
         <span>共 {total} 条流数据输出端记录</span>
         {errorMessage && <span className="error-text">{errorMessage}</span>}
       </footer>
+
+      <SinkCompatPanel />
     </section>
   )
 }

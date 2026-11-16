@@ -22,5 +22,6 @@ from app.routers import metric as router_metric
 from app.routers import alarm as router_alarm
 from app.routers import udf as router_udf
 from app.routers import log as router_log
+from app.routers import compat as router_compat
 
-ROUTERS = [router_streamin, router_operator, router_window, router_state, router_checkpoint, router_backpress, router_latency, router_jobops, router_sink, router_schema, router_watermark, router_parallel, router_metric, router_alarm, router_udf, router_log]
+ROUTERS = [router_streamin, router_operator, router_window, router_state, router_checkpoint, router_backpress, router_latency, router_jobops, router_sink, router_schema, router_watermark, router_parallel, router_metric, router_alarm, router_udf, router_log, router_compat]

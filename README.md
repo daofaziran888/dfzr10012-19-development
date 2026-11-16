@@ -73,5 +73,37 @@ npm run dev
 - 列表接口统一返回 `{ items, total, page, size }`，动作接口统一返回 `{ ok, message }`。
 - 状态流转只允许在 `app/services` 里改，路由层不做业务判断。
 
+## 字段映射兼容报告
+
+流数据格式定义新增候选版本的字段级兼容报告能力，代码在 `app/services/compat.py` 与
+`app/routers/compat.py`，前端入口分别挂在「流数据格式定义」与「流数据输出端」页面。
+
+- 候选格式文件只按**字段名称、字段类型、格式版本**三个要素，与同一定义编号下**已发布**
+  字段逐条校验，生成字段映射兼容报告，报告固定保留**不兼容字段、输出契约和建议版本**。
+- 同一格式文件（同字段/同版本指纹）重复导入只生效一次，每次导入与下载都在上传记录留痕。
+- 字段类型冲突时同一定义编号只保留一份草稿兼容报告，旧草稿自动归档；报告与输出配置待办
+  在同一事务里一起落库，任一步失败整体回滚。
+- 输出配置侧（`/api/sink/.../compat/consume`）同步读取同一份报告并更新消费记录；处理边界
+  只接收一份已校验的草稿报告，候选类型与 append 只读契约冲突时拒绝同时采用候选类型和旧
+  写入模式，v1 契约保持可读。
+
+主要接口：
+
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| POST | `/api/schema/compat/import` | 导入候选格式文件并生成兼容报告 |
+| GET | `/api/schema/compat/reports` | 兼容报告列表（可按结论/状态过滤） |
+| GET | `/api/schema/compat/reports/{id}` | 报告明细（含不兼容字段、输出契约、建议版本） |
+| GET | `/api/schema/compat/reports/{id}/download` | 下载报告（附件形式） |
+| GET | `/api/schema/compat/uploads` | 上传/下载留痕记录 |
+| GET | `/api/schema/compat/todos` | 报告与输出配置待办 |
+| GET | `/api/schema/compat/export` | 导出全量兼容报告 |
+| GET | `/api/sink/compat/reports` | 输出配置入口读取同一份报告 |
+| POST | `/api/sink/{sink_id}/compat/consume` | 消费侧更新对应记录 |
+
+验收脚本：`backend/tests/test_compat_acceptance.py`（依赖 `httpx`，用 TestClient 跑全链路）。
+验收样例：SCHE-0002 的 amount 从 int 改为 string 后生成失败报告 rpt-19，SINK-0002 的
+append 契约保持只读、消费被拒绝，v1 仍可读取。
+
 领域：数据工程
 子方向：数仓与数据湖
